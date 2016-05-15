@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class UserBean implements Serializable{
+	
+	public UserBean(int id) {
+		super();
+		this.id = id;
+	}
 	private int id;
 	private String username;
 	private String password;

@@ -8,22 +8,58 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Cart implements Serializable{
+
 	int id = 0;
 	int uid = 0;
-	int rid = 0;
 	Date checkin = null;
 	Date checkout = null;
 	boolean extraBed = false;
+	String roomType = "";
+	Date bookingDate = null;
+	
+	public int getId() {
+		return id;
+	}
+
+	public int getUid() {
+		return uid;
+	}
+
+	public Date getCheckin() {
+		return checkin;
+	}
+
+	public Date getCheckout() {
+		return checkout;
+	}
+
+	public boolean isExtraBed() {
+		return extraBed;
+	}
+
+	public String getRoomType() {
+		return roomType;
+	}
+
+	public Date getBookingDate() {
+		return bookingDate;
+	}
+
 	
 	public void parseResultSet(ResultSet rs) throws SQLException, ParseException{
-		SimpleDateFormat dateformat = new SimpleDateFormat("dd-mm-yyyy");
-		int id = rs.getInt("id");
-		Date checkin = dateformat.parse(rs.getString("checkin"));
-		Date checkout = dateformat.parse(rs.getString("checkout"));
-		//Is this needed if session stores uid?
-		int uid = rs.getInt("uid");
-		String roomType = rs.getString("roomType");
-		boolean extraBed = rs.getBoolean("extraBed");
-		Date bookingDate = dateformat.parse(rs.getString("bookingDate"));
+		SimpleDateFormat sqldateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		id = rs.getInt("id");
+		checkin = sqldateFormat.parse(rs.getString("checkin"));
+		checkin = dateFormat.parse(new SimpleDateFormat("dd-MM-yyyy").format(checkin));
+		checkout = sqldateFormat.parse(rs.getString("checkout"));
+		checkout = dateFormat.parse(new SimpleDateFormat("dd-MM-yyyy").format(checkout));
+		uid = rs.getInt("uid");
+		roomType = rs.getString("roomType");
+		extraBed = rs.getBoolean("extraBed");
+		if(rs.getString("bookingDate") != null){
+			bookingDate = sqldateFormat.parse(rs.getString("bookingDate"));
+			bookingDate = dateFormat.parse(new SimpleDateFormat("dd-MM-yyyy").format(bookingDate));
+		}
 	}
 }
