@@ -24,6 +24,7 @@
 			<fmt:formatDate value="${cart.checkout}" pattern="dd-MM-yyyy" /> 
 			${cart.roomType}
 			</c:forEach>
+			<a href="modify.jsp">Modify Booking</a>
 		</c:otherwise>
 	</c:choose>
 </body>
