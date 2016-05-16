@@ -14,10 +14,10 @@
 </head>
 <body>
 <form action="CheckoutServlet" method = "get">
-<p><input type="text" size ="10" name="firstName" value=${user.firstName}>
-<p><input type="text" size ="10" name="lastName" value=${user.lastName}>
-<p><input type="text" size ="30" name="address" value=${user.address}>
-<P><input type="text" size ="30" name="email" value=${user.email}>
+<p><input type="text" size ="10" name="firstName" value=${u.firstName}>
+<p><input type="text" size ="10" name="lastName" value=${u.lastName}>
+<p><input type="text" size ="30" name="address" value=${u.address}>
+<P><input type="text" size ="30" name="email" value=${u.email}>
 <input type="hidden" name="action" value="confirm">
 <Input Type = "submit" Value = "Confirm">
 </body>

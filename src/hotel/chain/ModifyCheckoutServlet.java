@@ -34,11 +34,6 @@ public class ModifyCheckoutServlet extends HttpServlet {
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		boolean available = false;
 		
-		try{
-				Connection conn = DatabaseTool.getConnection();
-			
-				
-		}
 	}
 
 	/**

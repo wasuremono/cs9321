@@ -66,7 +66,7 @@ ${bookingError}
 					<td>N/A</td>
 				</c:otherwise>
 			</c:choose>	
-			<td>SomePrice</td>			
+			<td>$<fmt:formatNumber type="number" maxFractionDigits="2" value="${cart.cost}" /></td>			
 			</c:forEach>
 			</table>
 			<p> Total Cost :</p>

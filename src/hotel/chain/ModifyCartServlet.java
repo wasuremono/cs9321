@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import beans.BookingBean;
 import beans.UserBean;
@@ -41,7 +42,8 @@ public class ModifyCartServlet extends HttpServlet {
 		
 		String checkin = request.getParameter("checkin");	
 		String checkout = request.getParameter("checkout");	
-		UserBean u = (UserBean)request.getSession().getAttribute("userBean");
+		HttpSession mySession = request.getSession(false);
+		UserBean u = (UserBean) mySession.getAttribute("u");
 		Connection conn = null;
 		
 		try {

@@ -20,7 +20,16 @@ public class Cart implements Serializable{
 	int numRooms = 0;
 	String referenceID = "";
 	String pin = "";
+	double cost = 0.0;
 	
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+
 	public String getReferenceID() {
 		return referenceID;
 	}

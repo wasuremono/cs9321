@@ -17,6 +17,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import beans.BookingBean;
 import beans.UserBean;
@@ -53,7 +54,8 @@ public class CheckoutServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
-		UserBean u = new UserBean(1);
+		HttpSession mySession = request.getSession(false);
+		UserBean u = (UserBean) mySession.getAttribute("u");
 		String action = request.getParameter("action");
 		Vector<Cart> userCart = new Vector<Cart>();
 		boolean bookingOpen = true;
@@ -189,7 +191,7 @@ public class CheckoutServlet extends HttpServlet {
 				DatabaseTool.endConnection(conn);
 				MailService mailer = new MailService();
 				System.out.println("Preparing to send");
-				mailer.sendMail("test","Your Hotel Booking has been confirmed","<p>Your booking has been made, to check your booking follow the link below with the provided pin.</p>\n"+"<p>http://localhost:8080/Assign2/ManageBooking?bookingRef="+URL+"</p>\n"+"PIN: "+pin);
+				mailer.sendMail(u.getEmail(),"Your Hotel Booking has been confirmed","<p>Your booking has been made, to check your booking follow the link below with the provided pin.</p>\n"+"<p>http://localhost:8080/Assign2/ManageBooking?bookingRef="+URL+"</p>\n"+"PIN: "+pin);
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

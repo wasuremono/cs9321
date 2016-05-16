@@ -21,6 +21,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class CartServlet
@@ -44,7 +45,8 @@ public class CartServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
+		HttpSession mySession = request.getSession(false);
+		UserBean u = (UserBean) mySession.getAttribute("u");
 		String checkinString = request.getParameter("checkin");	
 		String checkoutString = request.getParameter("checkout");
 		String location = request.getParameter("location");
@@ -72,7 +74,7 @@ public class CartServlet extends HttpServlet {
 		Vector<Cart> userCart = new Vector<Cart>();
 		userCart.clear();
 		//UserBean u = (UserBean) request.getSession().getAttribute("userBean");
-		UserBean u = new UserBean(1);
+		
 		Connection conn = null;
 		
 		//if(removeBooking)
@@ -154,6 +156,49 @@ public class CartServlet extends HttpServlet {
 						c.parseResultSet(rs);
 						userCart.add(c);
 					}	
+				}
+				for(Cart c:userCart){
+					int basePrice = 0;
+					ps = conn.prepareStatement("select price from rooms where roomType = ?;");
+					ps.setString(1, c.getRoomType());
+					rs = ps.executeQuery();
+					if(rs.next()){
+						basePrice = rs.getInt("price");
+						
+					}
+					int stayDuration = (int)(c.getCheckout().getTime() - c.getCheckin().getTime())/(1000*60*60*24);
+					int adjDays = 0;
+					int extraBedPrice = 35;
+					Double adjPrice = 0.0;
+					Vector<java.util.Date> start = new Vector<java.util.Date>();
+					Vector<java.util.Date> end = new Vector<java.util.Date>();
+					Vector<Double> rate = new Vector<Double>();
+					ps = conn.prepareStatement("select rate, start, end from roomrates where location = ? and roomType = ? AND ((start <= ? AND end >= ?));");
+					ps.setString(1, c.getLocation());
+					ps.setString(2, c.getRoomType());
+					ps.setDate(3, new java.sql.Date(c.getCheckout().getTime()));
+					ps.setDate(4, new java.sql.Date(c.getCheckin().getTime()));
+					rs = ps.executeQuery();
+					while(rs.next()){						
+						start.add(new java.util.Date(rs.getDate("start").getTime()));
+						end.add(new java.util.Date(rs.getDate("end").getTime()));
+						rate.add(rs.getDouble("rate"));
+					}
+					for(int i=0;i<start.size();i++){
+						//enda-starta,enda-startb,endb-starta,endb-startb
+						//a = this
+						int overLapA =(int)(c.getCheckout().getTime() - c.getCheckin().getTime())/(1000*60*60*24);
+						int overLapB =(int)(c.getCheckout().getTime() - start.get(i).getTime())/(1000*60*60*24);
+						int overLapC =(int)(end.get(i).getTime() - c.getCheckin().getTime())/(1000*60*60*24);
+						int overLapD =(int)(end.get(i).getTime() - start.get(i).getTime())/(1000*60*60*24);
+						int minA = Math.min(overLapA,overLapB);
+						int minB = Math.min(overLapC,overLapD);
+						int ratePeriod = Math.min(minA, minB);
+						adjDays += ratePeriod;
+						adjPrice += adjDays*rate.get(i)*(basePrice*c.getNumRooms()+c.getExtraBed()*extraBedPrice);
+					}
+					adjPrice += (stayDuration - adjDays)*basePrice;
+					c.cost = adjPrice;
 				}
 				DatabaseTool.endConnection(conn);
 				request.setAttribute("cart", userCart);

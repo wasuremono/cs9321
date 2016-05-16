@@ -23,8 +23,8 @@ public class UserBean implements Serializable{
 	private String email;
 	private String cardNumber;
 	private String cardName;
-	private Date cardExpire;
-	private int cvc;
+	private String cardExpire;
+	private String cvc;
 	private int userType;
 	public int getId() {
 		return id;
@@ -56,10 +56,10 @@ public class UserBean implements Serializable{
 	public String getCardName() {
 		return cardName;
 	}
-	public Date getCardExpire() {
+	public String getCardExpire() {
 		return cardExpire;
 	}
-	public int getCvc() {
+	public String getCvc() {
 		return cvc;
 	}
 	public int getUserType() {
@@ -95,10 +95,10 @@ public class UserBean implements Serializable{
 	public void setCardName(String cardName) {
 		this.cardName = cardName;
 	}
-	public void setCardExpire(Date cardExpire) {
+	public void setCardExpire(String cardExpire) {
 		this.cardExpire = cardExpire;
 	}
-	public void setCvc(int cvc) {
+	public void setCvc(String cvc) {
 		this.cvc = cvc;
 	}
 	public void setUserType(int userType) {
