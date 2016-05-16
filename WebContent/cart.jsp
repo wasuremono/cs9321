@@ -76,6 +76,7 @@ ${bookingError}
 				<!-- back to unique url? -->
 				<a href="index.jsp">Keep existing Booking</a>
 				<a href="CartServlet?action=remove">Cancel Booking</a>
+				<a href="CheckoutServlet?action=checkout&modify=1">Checkout</a>
 				</c:when>
 			</c:choose>
 			<c:otherwise>
