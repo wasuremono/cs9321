@@ -163,7 +163,35 @@ public class CartServlet extends HttpServlet {
 			}
 
 			
-			rd = request.getRequestDispatcher("/cart.jsp");	
+			rd = request.getRequestDispatcher("/cart.jsp?mod=0");	
+		}
+		//modified cart
+		if(action.equals("viewCart2")){
+			try{
+				conn = DatabaseTool.getConnection();
+				PreparedStatement ps = conn.prepareStatement("select * from bookingOrders where uid =?;");
+				//change this to bookingid
+				ps.setInt(1,u.getId());
+				ResultSet rs = ps.executeQuery();
+				if(!rs.next()){
+					System.out.println("No Results");
+				} else {
+					rs.beforeFirst();
+					while(rs.next()){
+						Cart c = new Cart();
+						c.parseResultSet(rs);
+						userCart.add(c);
+					}	
+				}
+				DatabaseTool.endConnection(conn);
+				request.setAttribute("cart", userCart);
+			} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException | ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			
+			rd = request.getRequestDispatcher("/cart.jsp?mod=1");	
 		}
 		
 		//response.sendRedirect("cartServlet?action=viewCart");		

@@ -1,10 +1,16 @@
 package hotel.chain;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.Vector;
+import java.text.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -38,16 +44,80 @@ public class ModifyCartServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		
-		
-		String checkin = request.getParameter("checkin");	
-		String checkout = request.getParameter("checkout");	
 		UserBean u = (UserBean)request.getSession().getAttribute("userBean");
+		String checkinStr = request.getParameter("checkin");	
+		String checkoutStr = request.getParameter("checkout");
+		String roomType = request.getParameter("roomType");
+		String location = request.getParameter("location");
+		String numRooms = request.getParameter("numRooms");
+		//SimpleDateFormat sqldateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		java.util.Date checkin = null;
+		java.util.Date checkout = null;
+		RequestDispatcher rd = request.getRequestDispatcher("");
 		Connection conn = null;
+		Vector<Cart> userCart = new Vector<Cart>();
+		String action = request.getParameter("action");
+		userCart.clear();
 		
-		try {
+		
+		if(request.getParameterMap().containsKey("checkin")){
+			try {
+				checkin =  dateFormat.parse(checkinStr);
+				checkout = dateFormat.parse(checkoutStr);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		
+		if(action.equals("addRoom")){
+			try{
+				//populate cart with existing booking
+				conn = DatabaseTool.getConnection();
+				PreparedStatement pssel = conn.prepareStatement("SELECT * FROM bookings WHERE uid =?;");
+				//change this to bookingid
+				pssel.setInt(1,u.getId());
+				ResultSet rs = pssel.executeQuery();
+				if(!rs.next()){
+					System.out.println("No Results");
+				} else {
+					rs.beforeFirst();
+					while(rs.next()){
+						Cart c = new Cart();
+						c.parseResultSet(rs);
+						userCart.add(c);
+					}	
+				}
+				//move existing fields into booking orders (view cart)
+				PreparedStatement psins = conn.prepareStatement("INSERT INTO bookingorders SELECT * FROM bookings where uid =?;");
+				psins.executeUpdate();
+				//add into Booking Orders, redirect to viewCart
+				PreparedStatement psadd = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomType`,`extraBed`,`bookingDate`,`location`,`numRooms`)VALUES(?,?,?,?,?,NULL,?,?);");
+				psadd.setDate(1, new java.sql.Date(checkin.getTime()));
+				psadd.setDate(2, new java.sql.Date(checkout.getTime()));
+				psadd.setInt(3, u.getId());
+				psadd.setString(4, roomType);
+				psadd.setInt(5, 0);
+				psadd.setString(6, location);
+				psadd.setInt(7, Integer.parseInt(numRooms));
+				psadd.executeUpdate();
+				DatabaseTool.endConnection(conn);
+				
+			} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException | ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			rd = request.getRequestDispatcher("CartServlet?action=viewCart2");
+		
+			
+		}
+		
+		
+		/**try {
 				conn = DatabaseTool.getConnection();
 				//need further checks
-				PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) as numRooms from bookings where checkin >=? and checkout <= ?;");
+				PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) as numRooms from bookings where checkin >=? and checkout <= ?; and roomtype");
 				ps.setString(1, checkout);
 				ps.setString(2, checkin);
 				ResultSet rs = ps.executeQuery();
@@ -74,7 +144,8 @@ public class ModifyCartServlet extends HttpServlet {
 		catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}**/
+		
 	}	
 
 	/**
