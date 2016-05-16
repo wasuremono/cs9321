@@ -7,5 +7,7 @@
 </head>
 <body>
 <a href="CartServlet?action=viewCart">Shopping cart <span class="glyphicon glyphicon-shopping-cart">	
+<p><a href="CartServlet?action=add&checkin=16-05-2016&checkout=17-05-2016&location=Sydney&roomType=Twin&numRooms=10">Add Entry <span class="glyphicon glyphicon-shopping-cart">
+<p>	<a href="CartServlet?action=add&checkin=16-05-2016&checkout=17-05-2016&location=Brisbane&roomType=Single&numRooms=10">Add Entry <span class="glyphicon glyphicon-shopping-cart">
 </body>
 </html>

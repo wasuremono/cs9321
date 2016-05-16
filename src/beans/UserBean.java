@@ -8,6 +8,10 @@ public class UserBean implements Serializable{
 	public UserBean(int id) {
 		super();
 		this.id = id;
+		this.firstName = "Ken";
+		this.lastName ="Ng";
+		this.address = "";
+		this.email = "";
 	}
 	private int id;
 	private String username;
