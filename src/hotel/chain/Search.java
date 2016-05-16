@@ -41,11 +41,19 @@ public class Search extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//UserBean user = (UserBean) request.getSession().getAttribute("userBean");
 		ArrayList<RoomDTO> searchResults = new ArrayList<RoomDTO>();
+		String price = request.getParameter("price");
+		if(price == "") {
+			price = Integer.toString(Integer.MAX_VALUE);
+		}
 		
 		try {
 			Connection conn = DatabaseTool.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sqlSearch);
-			ps.setInt(1,request.getParameter(""));
+			/*ps.setString(1, request.getParameter("checkin"));
+			ps.setString(2, request.getParameter("checkout"));
+			ps.setString(3, request.getParameter("city"));
+			ps.setString(4, request.getParameter("numberofrooms"));
+			ps.setString(5, price);*/
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()) {
@@ -61,7 +69,7 @@ public class Search extends HttpServlet {
 			request.setAttribute("results", searchResults);
 			
 			DatabaseTool.endConnection(conn);
-		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException | ParseException e) {
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		

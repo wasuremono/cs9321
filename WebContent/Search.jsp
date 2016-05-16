@@ -76,12 +76,8 @@
 		var input3 = invalidClassApply(price, price.value <= 0);
 	    
 		var params = {
-			checkinday: checkin.value.split('-')[2],
-			checkinmonth: checkin.value.split('-')[1],
-			checkinyear: checkin.value.split('-')[0],
-			checkoutday: checkout.value.split('-')[2],
-			checkoutmonth: checkout.value.split('-')[1],
-			checkoutyear: checkout.value.split('-')[0],
+			checkin: checkin.value,
+			checkout: checkout.value,
 			city: city.value,
 			numberofrooms: numberofrooms.value,
 			price: price.value
