@@ -71,7 +71,6 @@ ${bookingError}
 			</table>
 			<p> Total Cost :</p>
 			<a href="CartServlet?action=remove">Cancel Booking 
-			<a href="CheckoutServlet?action=checkout">Checkout 
 		</c:otherwise>
 	</c:choose>
 	</div>

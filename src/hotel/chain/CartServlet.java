@@ -47,6 +47,9 @@ public class CartServlet extends HttpServlet {
 		
 		String checkinString = request.getParameter("checkin");	
 		String checkoutString = request.getParameter("checkout");
+		String location = request.getParameter("location");
+		String roomType = request.getParameter("roomType");
+		String numRooms = request.getParameter("numRooms");
 		SimpleDateFormat sqldateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		java.util.Date checkin = null;
@@ -67,6 +70,7 @@ public class CartServlet extends HttpServlet {
 		
 		String action = request.getParameter("action");
 		Vector<Cart> userCart = new Vector<Cart>();
+		userCart.clear();
 		//UserBean u = (UserBean) request.getSession().getAttribute("userBean");
 		UserBean u = new UserBean(1);
 		Connection conn = null;
@@ -91,14 +95,16 @@ public class CartServlet extends HttpServlet {
 		if(action.equals("add")){
 			try{
 				conn = DatabaseTool.getConnection();
-				PreparedStatement ps = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomType`,`extraBed`,`bookingDate`)VALUES(?,?,?,?,?,NULL);");
+				PreparedStatement ps = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomType`,`extraBed`,`bookingDate`,`location`,`numRooms`)VALUES(?,?,?,?,?,NULL,?,?);");
 				ps.setDate(1, new java.sql.Date(checkin.getTime()));
 				ps.setDate(2, new java.sql.Date(checkout.getTime()));
 				//Change this to current user based on session
 				ps.setInt(3, u.getId());
 				//Change this to selected roomType
-				ps.setString(4, "Single");
-				ps.setBoolean(5, true);
+				ps.setString(4, roomType);
+				ps.setInt(5, 0);				
+				ps.setString(6, location);
+				ps.setInt(7, Integer.parseInt(numRooms));
 				//bookingDate as NOW();
 				ps.executeUpdate();
 				DatabaseTool.endConnection(conn);
@@ -113,11 +119,13 @@ public class CartServlet extends HttpServlet {
 		//if edit
 		//Get bookingBean
 		String bookingID = request.getParameter("booking_ID");	
+		String extraBed = request.getParameter("extraBed");	
 			try{
 				conn = DatabaseTool.getConnection();
-				PreparedStatement ps = conn.prepareStatement("UPDATE bookingOrders SET extraBed = !extraBed where id =?;");
+				PreparedStatement ps = conn.prepareStatement("UPDATE bookingOrders SET extraBed = ? where id =?;");
 				//change this to bookingid
-				ps.setInt(1,Integer.parseInt(bookingID));	
+				ps.setInt(1, Integer.parseInt(extraBed));
+				ps.setInt(2,Integer.parseInt(bookingID));	
 				ps.executeUpdate();		
 				DatabaseTool.endConnection(conn);
 			} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
