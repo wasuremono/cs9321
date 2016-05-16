@@ -50,16 +50,22 @@ public class Cart implements Serializable{
 		SimpleDateFormat sqldateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		id = rs.getInt("id");
-		checkin = sqldateFormat.parse(rs.getString("checkin"));
-		checkin = dateFormat.parse(new SimpleDateFormat("dd-MM-yyyy").format(checkin));
-		checkout = sqldateFormat.parse(rs.getString("checkout"));
-		checkout = dateFormat.parse(new SimpleDateFormat("dd-MM-yyyy").format(checkout));
+		java.sql.Date sqlcheckin = rs.getDate("checkin");
+		checkin = new java.util.Date(sqlcheckin.getTime());
+		java.sql.Date sqlcheckout = rs.getDate("checkout");
+		checkout = new java.util.Date(sqlcheckout.getTime());
+		//checkin = sqldateFormat.parse(rs.getString("checkin"));
+		//checkin = dateFormat.parse(new SimpleDateFormat("dd-MM-yyyy").format(checkin));
+		//checkout = sqldateFormat.parse(rs.getString("checkout"));
+		//checkout = dateFormat.parse(new SimpleDateFormat("dd-MM-yyyy").format(checkout));
 		uid = rs.getInt("uid");
 		roomType = rs.getString("roomType");
 		extraBed = rs.getBoolean("extraBed");
-		if(rs.getString("bookingDate") != null){
-			bookingDate = sqldateFormat.parse(rs.getString("bookingDate"));
-			bookingDate = dateFormat.parse(new SimpleDateFormat("dd-MM-yyyy").format(bookingDate));
+		if(rs.getDate("bookingDate") != null){
+			//bookingDate = sqldateFormat.parse(rs.getString("bookingDate"));
+			//bookingDate = dateFormat.parse(new SimpleDateFormat("dd-MM-yyyy").format(bookingDate));
+			java.sql.Date sqlbooking = rs.getDate("bookingDate");
+			bookingDate = new java.util.Date(sqlbooking.getTime());
 		}
 	}
 }

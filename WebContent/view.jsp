@@ -7,5 +7,6 @@
 </head>
 <body>
 <a href="CartServlet?action=viewCart">Shopping cart <span class="glyphicon glyphicon-shopping-cart">	
+<a href="CartServlet?action=add&checkin=16-05-2016&checkout=17-05-2016">Add Entry <span class="glyphicon glyphicon-shopping-cart">	
 </body>
 </html>
