@@ -85,6 +85,31 @@ INSERT INTO `bookings` VALUES (19,'2016-05-16','2016-05-17',1,'Single',0,1,'2016
 UNLOCK TABLES;
 
 --
+-- Table structure for table `bookings`
+--
+
+DROP TABLE IF EXISTS `bookingmod`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bookingmod` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `checkin` date NOT NULL,
+  `checkout` date NOT NULL,
+  `uid` int(11) NOT NULL,
+  `roomType` varchar(20) NOT NULL,
+  `extraBed` int(11) NOT NULL,
+  `numRooms` int(11) DEFAULT NULL,
+  `bookingDate` date DEFAULT NULL,
+  `location` varchar(20) DEFAULT NULL,
+  `referenceID` varchar(40) DEFAULT NULL,
+  `pin` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`,`uid`),
+  KEY `uid_idx` (`uid`),
+  CONSTRAINT `idBookingOrderbookingmodUser` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `hotels`
 --
 

@@ -70,14 +70,18 @@ ${bookingError}
 			</c:forEach>
 			</table>
 			<p> Total Cost :</p>
+			<!-- Display different buttons if its a modify cart -->
 			<c:choose>
 				<c:when test="${m = 1}">
 				<!-- back to unique url? -->
 				<a href="index.jsp">Keep existing Booking</a>
+				<a href="CartServlet?action=remove">Cancel Booking</a>
 				</c:when>
 			</c:choose>
+			<c:otherwise>
 			<a href="CartServlet?action=remove">Cancel Booking</a>
 			<a href="CheckoutServlet?action=checkout">Checkout</a>
+			</c:otherwise>
 		</c:otherwise>
 	</c:choose>
 	</div>

@@ -55,6 +55,7 @@ public class CheckoutServlet extends HttpServlet {
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		UserBean u = new UserBean(1);
 		String action = request.getParameter("action");
+		String modify = request.getParameter("modify");
 		Vector<Cart> userCart = new Vector<Cart>();
 		boolean bookingOpen = true;
 		//Book Rooms
@@ -64,6 +65,17 @@ public class CheckoutServlet extends HttpServlet {
 				//for each userbookingorder
 				//sum up number of each roomtype
 				conn = DatabaseTool.getConnection();
+				//remove booking to not break checkout conditions
+				if(modify.equals("1")){
+					//insert booking into backup table, can restore if booking is not confirmed
+					PreparedStatement psins = conn.prepareStatement("INSERT into bookingmod SELECT * from booking where uid = ?");
+					psins.setInt(1, u.getId());
+					psins.executeUpdate();
+					PreparedStatement psdel = conn.prepareStatement("DELETE FROM booking WHERE uid = ?");
+					psdel.setInt(1, u.getId());
+					psdel.executeUpdate();
+				}
+				
 				PreparedStatement ps = conn.prepareStatement("select * from bookingOrders where uid =?;");
 				//change this to bookingid
 				ps.setInt(1,u.getId());
@@ -132,7 +144,15 @@ public class CheckoutServlet extends HttpServlet {
 					if(userBookingCount+totalBookingCount > totalRooms){
 						bookingOpen = false;
 						System.out.println("not enough rooms");
+						//reinsert booking and cleanup
+						PreparedStatement psins = conn.prepareStatement("INSERT into booking SELECT * from bookingmod where uid = ?");
+						psins.setInt(1, u.getId());
+						psins.executeUpdate();
+						PreparedStatement psdel = conn.prepareStatement("DELETE FROM bookingmod WHERE uid = ?");
+						psdel.setInt(1, u.getId());
+						psdel.executeUpdate();
 						break;
+						
 					}
 				}
 				
@@ -141,6 +161,13 @@ public class CheckoutServlet extends HttpServlet {
 					RequestDispatcher rd = request.getRequestDispatcher("CartServlet?action=viewCart");
 					String bookingError = "One or more of the selected rooms are currently unavailable, please try again at a later time or cancel current booking";
 					request.setAttribute("bookingError",bookingError );
+					//reinsert booking and cleanup
+					PreparedStatement psins = conn.prepareStatement("INSERT into booking SELECT * from bookingmod where uid = ?");
+					psins.setInt(1, u.getId());
+					psins.executeUpdate();
+					PreparedStatement psdel = conn.prepareStatement("DELETE FROM bookingmod WHERE uid = ?");
+					psdel.setInt(1, u.getId());
+					psdel.executeUpdate();
 					rd.forward(request, response);
 					return;
 				}
