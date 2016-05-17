@@ -45,10 +45,33 @@ public class CartServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		String checkin = request.getParameter("checkin");	
-		String checkout = request.getParameter("checkout");	
+		String checkinString = request.getParameter("checkin");	
+		String checkoutString = request.getParameter("checkout");
+		int roomid = request.getParameter("roomid");
+		String location = request.getParameter("location");
+		String roomType = request.getParameter("roomType");
+		String numRooms = request.getParameter("numRooms");
+		SimpleDateFormat sqldateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		java.util.Date checkin = null;
+		java.util.Date checkout = null;
+		RequestDispatcher rd = request.getRequestDispatcher("");
+		
+		if(request.getParameterMap().containsKey("checkin")){
+			try {
+				checkin =  dateFormat.parse(checkinString);
+				//checkin =  sqldateFormat.parse(new SimpleDateFormat("yyyy-MM-dd").format(checkin));	
+				checkout = dateFormat.parse(checkoutString);
+				//checkout = sqldateFormat.parse(new SimpleDateFormat("yyyy-MM-dd").format(checkout));
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		
 		String action = request.getParameter("action");
 		Vector<Cart> userCart = new Vector<Cart>();
+		userCart.clear();
 		//UserBean u = (UserBean) request.getSession().getAttribute("userBean");
 		UserBean u = new UserBean(1);
 		Connection conn = null;
@@ -65,20 +88,25 @@ public class CartServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			//response.sendRedirect("cartServlet?action=viewCart");
+			rd = request.getRequestDispatcher("CartServlet?action=viewCart");
 		}
 		//if(addbooking)
 		//Add Room	
 		if(action.equals("add")){
 			try{
 				conn = DatabaseTool.getConnection();
-				PreparedStatement ps = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomType`,`extraBed`,'bookingDate')VALUES(?,?,?,?,?,NOW());");
-				ps.setString(1, checkin);
-				ps.setString(2, checkout);
+				PreparedStatement ps = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomid`,`roomType`,`extraBed`,`bookingDate`,`location`,`numRooms`)VALUES(?,?,?,?,?,?,NULL,?,?);");
+				ps.setDate(1, new java.sql.Date(checkin.getTime()));
+				ps.setDate(2, new java.sql.Date(checkout.getTime()));
 				//Change this to current user based on session
 				ps.setInt(3, u.getId());
+				ps.setInt(4, roomid);
 				//Change this to selected roomType
-				ps.setString(4, "Single");
-				ps.setBoolean(5, false);
+				ps.setString(5, roomType);
+				ps.setInt(6, 0);				
+				ps.setString(7, location);
+				ps.setInt(8, Integer.parseInt(numRooms));
 				//bookingDate as NOW();
 				ps.executeUpdate();
 				DatabaseTool.endConnection(conn);
@@ -92,23 +120,27 @@ public class CartServlet extends HttpServlet {
 		if(action.equals("update")){
 		//if edit
 		//Get bookingBean
+		String bookingID = request.getParameter("booking_ID");	
+		String extraBed = request.getParameter("extraBed");	
 			try{
 				conn = DatabaseTool.getConnection();
-				PreparedStatement ps = conn.prepareStatement("UPDATE bookingOrders SET extraBed = !extraBed where id =?;");
+				PreparedStatement ps = conn.prepareStatement("UPDATE bookingOrders SET extraBed = ? where id =?;");
 				//change this to bookingid
-				ps.setInt(1,u.getId() );	
+				ps.setInt(1, Integer.parseInt(extraBed));
+				ps.setInt(2,Integer.parseInt(bookingID));	
 				ps.executeUpdate();		
 				DatabaseTool.endConnection(conn);
 			} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			rd = request.getRequestDispatcher("CartServlet?action=viewCart");
+
 		}
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		
 		//if action is cart then display it
 		if(action.equals("viewCart")){
-			RequestDispatcher rd = request.getRequestDispatcher("/cart.jsp");
 			try{
 				conn = DatabaseTool.getConnection();
 				PreparedStatement ps = conn.prepareStatement("select * from bookingOrders where uid =?;");
@@ -131,9 +163,42 @@ public class CartServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			rd.forward(request, response);
-			return;
+
+			
+			rd = request.getRequestDispatcher("/cart.jsp?mod=0");	
 		}
+		//modified cart
+		if(action.equals("viewCart2")){
+			try{
+				conn = DatabaseTool.getConnection();
+				PreparedStatement ps = conn.prepareStatement("select * from bookingOrders where uid =?;");
+				//change this to bookingid
+				ps.setInt(1,u.getId());
+				ResultSet rs = ps.executeQuery();
+				if(!rs.next()){
+					System.out.println("No Results");
+				} else {
+					rs.beforeFirst();
+					while(rs.next()){
+						Cart c = new Cart();
+						c.parseResultSet(rs);
+						userCart.add(c);
+					}	
+				}
+				DatabaseTool.endConnection(conn);
+				request.setAttribute("cart", userCart);
+			} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException | ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			
+			rd = request.getRequestDispatcher("/cart.jsp?mod=1");	
+		}
+		
+		//response.sendRedirect("cartServlet?action=viewCart");		
+		rd.forward(request,response);
+		return;	
 		//if origin was search then return to search
 		//if origin was cart, then update and return to cart
 	}
