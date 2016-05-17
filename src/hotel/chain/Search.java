@@ -26,7 +26,7 @@ import beans.RoomBean;
 public class Search extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-	private String sqlSearch = "select * from rooms inner join bookings on bookings.id != ?;";
+	private String sqlSearch = "SELECT * FROM rooms WHERE id NOT IN (SELECT * FROM bookings where ? >checkin and ? <=checkout and ? <numRooms and ? = city) and rooms.price < ? ;";
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -49,11 +49,11 @@ public class Search extends HttpServlet {
 		try {
 			Connection conn = DatabaseTool.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sqlSearch);
-			/*ps.setString(1, request.getParameter("checkin"));
+			ps.setString(1, request.getParameter("checkin"));
 			ps.setString(2, request.getParameter("checkout"));
-			ps.setString(3, request.getParameter("city"));
-			ps.setString(4, request.getParameter("numberofrooms"));
-			ps.setString(5, price);*/
+			ps.setString(4, request.getParameter("city"));
+			ps.setString(3, request.getParameter("numberofrooms"));
+			ps.setString(5, price);
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()) {
