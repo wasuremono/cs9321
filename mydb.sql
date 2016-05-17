@@ -27,6 +27,7 @@ CREATE TABLE `bookingorders` (
   `checkin` date NOT NULL,
   `checkout` date NOT NULL,
   `uid` int(11) NOT NULL,
+  `roomid` int(11) NOT NULL,
   `roomType` varchar(20) NOT NULL,
   `extraBed` int(11) NOT NULL,
   `numRooms` int(11) DEFAULT NULL,
@@ -36,6 +37,7 @@ CREATE TABLE `bookingorders` (
   `pin` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`,`uid`),
   KEY `uid_idx` (`uid`),
+  FOREIGN KEY (`roomid`),
   CONSTRAINT `idBookingOrderbookingordersUser` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -61,6 +63,7 @@ CREATE TABLE `bookings` (
   `checkin` date NOT NULL,
   `checkout` date NOT NULL,
   `uid` int(11) NOT NULL,
+  `roomid` int(11) NOT NULL,
   `roomType` varchar(20) NOT NULL,
   `extraBed` int(11) NOT NULL,
   `numRooms` int(11) DEFAULT NULL,
@@ -70,6 +73,7 @@ CREATE TABLE `bookings` (
   `pin` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`,`uid`),
   KEY `uid_idx` (`uid`),
+  FOREIGN KEY (`roomid`),
   CONSTRAINT `idBookingUser` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -96,6 +100,7 @@ CREATE TABLE `bookingmod` (
   `checkin` date NOT NULL,
   `checkout` date NOT NULL,
   `uid` int(11) NOT NULL,
+  `roomid` int(11) NOT NULL,
   `roomType` varchar(20) NOT NULL,
   `extraBed` int(11) NOT NULL,
   `numRooms` int(11) DEFAULT NULL,
@@ -105,6 +110,7 @@ CREATE TABLE `bookingmod` (
   `pin` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`,`uid`),
   KEY `uid_idx` (`uid`),
+  FOREIGN KEY (`roomid`),
   CONSTRAINT `idBookingOrderbookingmodUser` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -157,7 +163,7 @@ CREATE TABLE `rooms` (
 
 LOCK TABLES `rooms` WRITE;
 /*!40000 ALTER TABLE `rooms` DISABLE KEYS */;
-INSERT INTO `rooms` VALUES (1,80,1,'1',NULL),(2,80,NULL,'Single','Brisbane'),(3,80,NULL,'Single','Brisbane'),(4,80,NULL,'Single','Brisbane'),(5,80,NULL,'Single','Brisbane'),(6,130,NULL,'Twin','Brisbane'),(7,130,NULL,'Twin','Brisbane'),(8,130,NULL,'Twin','Brisbane'),(9,80,NULL,'Single','Sydney'),(10,80,NULL,'Single','Sydney'),(11,80,NULL,'Single','Sydney'),(12,80,NULL,'Single','Sydney'),(13,130,NULL,'Twin','Sydney'),(14,130,NULL,'Twin','Sydney'),(15,130,NULL,'Twin','Sydney'),(13,130,NULL,'Single','Hobart'),(7,79,NULL,'Single','Perth'),(7,95,NULL,'Single','Adelaide'),(6,110,NULL,'Single','Melbourne');
+INSERT INTO `rooms` VALUES (1,80,1,'1',NULL),(2,80,NULL,'Single','Brisbane'),(3,80,NULL,'Single','Brisbane'),(4,80,NULL,'Single','Brisbane'),(5,80,NULL,'Single','Brisbane'),(6,130,NULL,'Twin','Brisbane'),(7,130,NULL,'Twin','Brisbane'),(8,130,NULL,'Twin','Brisbane'),(9,80,NULL,'Single','Sydney'),(10,80,NULL,'Single','Sydney'),(11,80,NULL,'Single','Sydney'),(12,80,NULL,'Single','Sydney'),(13,130,NULL,'Twin','Sydney'),(14,130,NULL,'Twin','Sydney'),(15,130,NULL,'Twin','Sydney'),(16,130,NULL,'Single','Hobart'),(17,79,NULL,'Single','Perth'),(18,95,NULL,'Single','Adelaide'),(19,110,NULL,'Single','Melbourne');
 /*!40000 ALTER TABLE `rooms` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -47,6 +47,7 @@ public class ModifyCartServlet extends HttpServlet {
 		UserBean u = (UserBean)request.getSession().getAttribute("userBean");
 		String checkinStr = request.getParameter("checkin");	
 		String checkoutStr = request.getParameter("checkout");
+		int roomid = request.getParameter("roomid");
 		String roomType = request.getParameter("roomType");
 		String location = request.getParameter("location");
 		String numRooms = request.getParameter("numRooms");
@@ -93,14 +94,15 @@ public class ModifyCartServlet extends HttpServlet {
 				PreparedStatement psins = conn.prepareStatement("INSERT INTO bookingorders SELECT * FROM bookings where uid =?;");
 				psins.executeUpdate();
 				//add into Booking Orders, redirect to viewCart
-				PreparedStatement psadd = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomType`,`extraBed`,`bookingDate`,`location`,`numRooms`)VALUES(?,?,?,?,?,NULL,?,?);");
+				PreparedStatement psadd = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomid`,`roomType`,`extraBed`,`bookingDate`,`location`,`numRooms`)VALUES(?,?,?,?,?,?,NULL,?,?);");
 				psadd.setDate(1, new java.sql.Date(checkin.getTime()));
 				psadd.setDate(2, new java.sql.Date(checkout.getTime()));
 				psadd.setInt(3, u.getId());
-				psadd.setString(4, roomType);
-				psadd.setInt(5, 0);
-				psadd.setString(6, location);
-				psadd.setInt(7, Integer.parseInt(numRooms));
+				psadd.setInt(4, roomid);
+				psadd.setString(5, roomType);
+				psadd.setInt(6, 0);
+				psadd.setString(7, location);
+				psadd.setInt(8, Integer.parseInt(numRooms));
 				psadd.executeUpdate();
 				DatabaseTool.endConnection(conn);
 				

@@ -47,6 +47,7 @@ public class CartServlet extends HttpServlet {
 		
 		String checkinString = request.getParameter("checkin");	
 		String checkoutString = request.getParameter("checkout");
+		int roomid = request.getParameter("roomid");
 		String location = request.getParameter("location");
 		String roomType = request.getParameter("roomType");
 		String numRooms = request.getParameter("numRooms");
@@ -95,16 +96,17 @@ public class CartServlet extends HttpServlet {
 		if(action.equals("add")){
 			try{
 				conn = DatabaseTool.getConnection();
-				PreparedStatement ps = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomType`,`extraBed`,`bookingDate`,`location`,`numRooms`)VALUES(?,?,?,?,?,NULL,?,?);");
+				PreparedStatement ps = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomid`,`roomType`,`extraBed`,`bookingDate`,`location`,`numRooms`)VALUES(?,?,?,?,?,?,NULL,?,?);");
 				ps.setDate(1, new java.sql.Date(checkin.getTime()));
 				ps.setDate(2, new java.sql.Date(checkout.getTime()));
 				//Change this to current user based on session
 				ps.setInt(3, u.getId());
+				ps.setInt(4, roomid);
 				//Change this to selected roomType
-				ps.setString(4, roomType);
-				ps.setInt(5, 0);				
-				ps.setString(6, location);
-				ps.setInt(7, Integer.parseInt(numRooms));
+				ps.setString(5, roomType);
+				ps.setInt(6, 0);				
+				ps.setString(7, location);
+				ps.setInt(8, Integer.parseInt(numRooms));
 				//bookingDate as NOW();
 				ps.executeUpdate();
 				DatabaseTool.endConnection(conn);

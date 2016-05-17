@@ -144,13 +144,15 @@ public class CheckoutServlet extends HttpServlet {
 					if(userBookingCount+totalBookingCount > totalRooms){
 						bookingOpen = false;
 						System.out.println("not enough rooms");
-						//reinsert booking and cleanup
-						PreparedStatement psins = conn.prepareStatement("INSERT into booking SELECT * from bookingmod where uid = ?");
-						psins.setInt(1, u.getId());
-						psins.executeUpdate();
-						PreparedStatement psdel = conn.prepareStatement("DELETE FROM bookingmod WHERE uid = ?");
-						psdel.setInt(1, u.getId());
-						psdel.executeUpdate();
+						//reinstate booking and cleanup if modify
+						if(modify.equals("1")){
+							PreparedStatement psins = conn.prepareStatement("INSERT into booking SELECT * from bookingmod where uid = ?");
+							psins.setInt(1, u.getId());
+							psins.executeUpdate();
+							PreparedStatement psdel = conn.prepareStatement("DELETE FROM bookingmod WHERE uid = ?");
+							psdel.setInt(1, u.getId());
+							psdel.executeUpdate();
+						}						
 						break;
 						
 					}
@@ -161,13 +163,15 @@ public class CheckoutServlet extends HttpServlet {
 					RequestDispatcher rd = request.getRequestDispatcher("CartServlet?action=viewCart");
 					String bookingError = "One or more of the selected rooms are currently unavailable, please try again at a later time or cancel current booking";
 					request.setAttribute("bookingError",bookingError );
-					//reinsert booking and cleanup
-					PreparedStatement psins = conn.prepareStatement("INSERT into booking SELECT * from bookingmod where uid = ?");
-					psins.setInt(1, u.getId());
-					psins.executeUpdate();
-					PreparedStatement psdel = conn.prepareStatement("DELETE FROM bookingmod WHERE uid = ?");
-					psdel.setInt(1, u.getId());
-					psdel.executeUpdate();
+					//reinstate booking and cleanup if modify
+					if(modify.equals("1")){
+						PreparedStatement psins = conn.prepareStatement("INSERT into booking SELECT * from bookingmod where uid = ?");
+						psins.setInt(1, u.getId());
+						psins.executeUpdate();
+						PreparedStatement psdel = conn.prepareStatement("DELETE FROM bookingmod WHERE uid = ?");
+						psdel.setInt(1, u.getId());
+						psdel.executeUpdate();
+					}
 					rd.forward(request, response);
 					return;
 				}
