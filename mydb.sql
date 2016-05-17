@@ -157,7 +157,7 @@ CREATE TABLE `rooms` (
 
 LOCK TABLES `rooms` WRITE;
 /*!40000 ALTER TABLE `rooms` DISABLE KEYS */;
-INSERT INTO `rooms` VALUES (1,80,1,'1',NULL),(2,80,NULL,'Single','Brisbane'),(3,80,NULL,'Single','Brisbane'),(4,80,NULL,'Single','Brisbane'),(5,80,NULL,'Single','Brisbane'),(6,130,NULL,'Twin','Brisbane'),(7,130,NULL,'Twin','Brisbane'),(8,130,NULL,'Twin','Brisbane'),(9,80,NULL,'Single','Sydney'),(10,80,NULL,'Single','Sydney'),(11,80,NULL,'Single','Sydney'),(12,80,NULL,'Single','Sydney'),(13,130,NULL,'Twin','Sydney'),(14,130,NULL,'Twin','Sydney'),(15,130,NULL,'Twin','Sydney');
+INSERT INTO `rooms` VALUES (1,80,1,'1',NULL),(2,80,NULL,'Single','Brisbane'),(3,80,NULL,'Single','Brisbane'),(4,80,NULL,'Single','Brisbane'),(5,80,NULL,'Single','Brisbane'),(6,130,NULL,'Twin','Brisbane'),(7,130,NULL,'Twin','Brisbane'),(8,130,NULL,'Twin','Brisbane'),(9,80,NULL,'Single','Sydney'),(10,80,NULL,'Single','Sydney'),(11,80,NULL,'Single','Sydney'),(12,80,NULL,'Single','Sydney'),(13,130,NULL,'Twin','Sydney'),(14,130,NULL,'Twin','Sydney'),(15,130,NULL,'Twin','Sydney'),(13,130,NULL,'Single','Hobart'),(7,79,NULL,'Single','Perth'),(7,95,NULL,'Single','Adelaide'),(6,110,NULL,'Single','Melbourne');
 /*!40000 ALTER TABLE `rooms` ENABLE KEYS */;
 UNLOCK TABLES;
 
