@@ -37,8 +37,8 @@ public class ProfileServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String verifyID = request.getParameter("verify");
-		UserBean u = new UserBean(0);
-		HttpSession mySession = request.getSession(false);
+		UserBean u = new UserBean();
+		HttpSession mySession = request.getSession();
 		String getVerify = "select * from userspending where verification = ?;";
 		String insert = "Insert into users (username,password,email) select username,password,email from userspending where verification = ?;";
 		String delete = "delete from userspending where verification = ?;";
@@ -100,6 +100,8 @@ public class ProfileServlet extends HttpServlet {
 			u.setCvc(request.getParameter("cvc"));
 			if(request.getParameter("password").equals(request.getParameter("password2")) && !request.getParameter("password").equals("")){
 				u.setPassword(request.getParameter("password"));
+			} else {
+				
 			}
 			Connection conn;
 			try {
@@ -127,8 +129,39 @@ public class ProfileServlet extends HttpServlet {
 			}
 			
 			
+		}if(action.equals("confirm")){
+			update = "update users set firstname = ?,lastname = ?, email = ?, cardNumber = ?, cardExpire = ?, cardName = ?,cvc =?,address = ? where id = ?;"; 
+			u.setFirstName(request.getParameter("firstName"));
+			u.setLastName(request.getParameter("lastName"));
+			u.setAddress(request.getParameter("address"));
+			u.setEmail(request.getParameter("email"));
+			u.setCardNumber(request.getParameter("cardNumber"));
+			u.setCardName(request.getParameter("cardName"));
+			u.setCardExpire(request.getParameter("cardExpire"));
+			u.setCvc(request.getParameter("cvc"));
+			Connection conn;
+			try {
+				conn = DatabaseTool.getConnection();
+				PreparedStatement ps = conn.prepareStatement(update);
+				ps.setString(1, u.getFirstName());
+				ps.setString(2, u.getLastName());
+				ps.setString(3, u.getEmail());
+				ps.setString(4, u.getCardNumber());
+				ps.setString(5, u.getCardExpire());
+				ps.setString(6, u.getCardName());
+				ps.setString(7, u.getCvc());
+				ps.setString(8, u.getAddress());
+				ps.setInt(9, u.getId());
+				ps.executeUpdate();
+				mySession.setAttribute("u", u);
+				rd = request.getRequestDispatcher("/CheckoutServlet?action=confirm");
+				rd.forward(request, response);
+				return;
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		doGet(request, response);
 	}
 
 }

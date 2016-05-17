@@ -27,7 +27,7 @@ input, label {
 </style>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Checkout</title>
+<title>Hotels</title>
 </head>
 <body>
 <form action="profile" method = "post">
@@ -35,9 +35,24 @@ input, label {
 <p><label for="u2">Last Name</label>			<input id ="u2" type="text" size ="30" name="lastName" value=${sessionScope.u.lastName}>
 <P><label for="u3">Nickname</label>			<input id ="u3" type="text" size ="30" name="nickname" value=${sessionScope.u.nickName}>
 <p><label for="u4">Address</label>			<input id ="u4" type="text" size ="30" name="address" value=${sessionScope.u.address}>
-<P><label for="u5">Email Address</label>		<input id ="u5" type="text" size ="30" name="email" value=${sessionScope.u.email}>
-<P><label for="u6">Password</label>			<input id ="u6" type="text" size ="30" name="password" value="">
-<P><label for="u7">Confirm Password</label>	<input id ="u7" type="text" size ="30" name="password2" value="">
+<P><label for="u5">Email Address</label>		<input required id="u5" size="30" type="email" name="email" value=${sessionScope.u.email} >
+<P><label for="u6">Password</label>			<input id ="u6" type="password" size ="30" name="password" value=${sessionScope.u.password}>
+<P><label for="u7">Confirm Password</label>	<input id ="u7" type="password" size ="30" name="password2" value=${sessionScope.u.password}>
+<script language='javascript' type='text/javascript'>
+    var password = document.getElementById("u6");
+    var passwordConfirm = document.getElementById("u7");
+    function checkPassword(){
+    	if(password.value!=passwordConfirm.value){
+    		passwordConfirm.setCustomValidity("Password must match");
+    	}else if(password.value == ""){
+    		password.setCustomValidity("Password must not be blank");
+    	}else{
+    		passwordConfirm.setCustomValidity('');
+    	}
+    }
+    password.onchange = checkPassword;
+    passwordConfirm.onkeyup = checkPassword;
+</script>
 <!-- Card details follows -->                      
 <P><label for="u8">CC Number</label>			<input id ="u8" type="text" size ="30" name="cardNumber" value=${sessionScope.u.cardNumber}>
 <P><label for="u9">CC Name</label>			<input id ="u9" type="text" size ="30" name="cardName" value=${sessionScope.u.cardName}>

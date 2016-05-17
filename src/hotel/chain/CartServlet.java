@@ -52,10 +52,12 @@ public class CartServlet extends HttpServlet {
 		String location = request.getParameter("location");
 		String roomType = request.getParameter("roomType");
 		String numRooms = request.getParameter("numRooms");
+		String extraBed = request.getParameter("extraBed");
 		SimpleDateFormat sqldateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		java.util.Date checkin = null;
 		java.util.Date checkout = null;
+		Calculator p = new Calculator();
 		RequestDispatcher rd = request.getRequestDispatcher("");
 		
 		if(request.getParameterMap().containsKey("checkin")){
@@ -95,7 +97,7 @@ public class CartServlet extends HttpServlet {
 		//if(addbooking)
 		//Add Room	
 		if(action.equals("add")){
-			try{
+			try{				
 				conn = DatabaseTool.getConnection();
 				PreparedStatement ps = conn.prepareStatement("INSERT INTO bookingorders(`checkin`,`checkout`,`uid`,`roomType`,`extraBed`,`bookingDate`,`location`,`numRooms`)VALUES(?,?,?,?,?,NULL,?,?);");
 				ps.setDate(1, new java.sql.Date(checkin.getTime()));
@@ -104,13 +106,15 @@ public class CartServlet extends HttpServlet {
 				ps.setInt(3, u.getId());
 				//Change this to selected roomType
 				ps.setString(4, roomType);
-				ps.setInt(5, 0);				
+				ps.setInt(5, Integer.parseInt(extraBed));				
 				ps.setString(6, location);
 				ps.setInt(7, Integer.parseInt(numRooms));
 				//bookingDate as NOW();
 				ps.executeUpdate();
 				DatabaseTool.endConnection(conn);
-				
+				rd = request.getRequestDispatcher("/default.jsp");
+			    rd.forward(request,response);
+			    return;
 				//return the booking id?
 			} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -120,8 +124,7 @@ public class CartServlet extends HttpServlet {
 		if(action.equals("update")){
 		//if edit
 		//Get bookingBean
-		String bookingID = request.getParameter("booking_ID");	
-		String extraBed = request.getParameter("extraBed");	
+		String bookingID = request.getParameter("booking_ID");
 			try{
 				conn = DatabaseTool.getConnection();
 				PreparedStatement ps = conn.prepareStatement("UPDATE bookingOrders SET extraBed = ? where id =?;");
@@ -135,12 +138,13 @@ public class CartServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 			rd = request.getRequestDispatcher("CartServlet?action=viewCart");
-
+			return;
 		}
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		
 		//if action is cart then display it
 		if(action.equals("viewCart")){
+			double totalCost = 0;
 			try{
 				conn = DatabaseTool.getConnection();
 				PreparedStatement ps = conn.prepareStatement("select * from bookingOrders where uid =?;");
@@ -148,7 +152,6 @@ public class CartServlet extends HttpServlet {
 				ps.setInt(1,u.getId());
 				ResultSet rs = ps.executeQuery();
 				if(!rs.next()){
-					System.out.println("No Results");
 				} else {
 					rs.beforeFirst();
 					while(rs.next()){
@@ -157,50 +160,12 @@ public class CartServlet extends HttpServlet {
 						userCart.add(c);
 					}	
 				}
-				for(Cart c:userCart){
-					int basePrice = 0;
-					ps = conn.prepareStatement("select price from rooms where roomType = ?;");
-					ps.setString(1, c.getRoomType());
-					rs = ps.executeQuery();
-					if(rs.next()){
-						basePrice = rs.getInt("price");
-						
-					}
-					int stayDuration = (int)(c.getCheckout().getTime() - c.getCheckin().getTime())/(1000*60*60*24);
-					int adjDays = 0;
-					int extraBedPrice = 35;
-					Double adjPrice = 0.0;
-					Vector<java.util.Date> start = new Vector<java.util.Date>();
-					Vector<java.util.Date> end = new Vector<java.util.Date>();
-					Vector<Double> rate = new Vector<Double>();
-					ps = conn.prepareStatement("select rate, start, end from roomrates where location = ? and roomType = ? AND ((start <= ? AND end >= ?));");
-					ps.setString(1, c.getLocation());
-					ps.setString(2, c.getRoomType());
-					ps.setDate(3, new java.sql.Date(c.getCheckout().getTime()));
-					ps.setDate(4, new java.sql.Date(c.getCheckin().getTime()));
-					rs = ps.executeQuery();
-					while(rs.next()){						
-						start.add(new java.util.Date(rs.getDate("start").getTime()));
-						end.add(new java.util.Date(rs.getDate("end").getTime()));
-						rate.add(rs.getDouble("rate"));
-					}
-					for(int i=0;i<start.size();i++){
-						//enda-starta,enda-startb,endb-starta,endb-startb
-						//a = this
-						int overLapA =(int)(c.getCheckout().getTime() - c.getCheckin().getTime())/(1000*60*60*24);
-						int overLapB =(int)(c.getCheckout().getTime() - start.get(i).getTime())/(1000*60*60*24);
-						int overLapC =(int)(end.get(i).getTime() - c.getCheckin().getTime())/(1000*60*60*24);
-						int overLapD =(int)(end.get(i).getTime() - start.get(i).getTime())/(1000*60*60*24);
-						int minA = Math.min(overLapA,overLapB);
-						int minB = Math.min(overLapC,overLapD);
-						int ratePeriod = Math.min(minA, minB);
-						adjDays += ratePeriod;
-						adjPrice += adjDays*rate.get(i)*(basePrice*c.getNumRooms()+c.getExtraBed()*extraBedPrice);
-					}
-					adjPrice += (stayDuration - adjDays)*basePrice;
-					c.cost = adjPrice;
+				for(Cart c:userCart){						
+					c.cost = p.calculatePrice(c.getRoomType(), c.getLocation(), c.getCheckin(), c.getCheckout(), c.getNumRooms(), c.getExtraBed());
+					totalCost += c.cost;
 				}
 				DatabaseTool.endConnection(conn);
+				mySession.setAttribute("cost", totalCost);
 				request.setAttribute("cart", userCart);
 			} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException | ParseException e) {
 				// TODO Auto-generated catch block

@@ -58,6 +58,7 @@ public class CheckoutServlet extends HttpServlet {
 		UserBean u = (UserBean) mySession.getAttribute("u");
 		String action = request.getParameter("action");
 		Vector<Cart> userCart = new Vector<Cart>();
+		RequestDispatcher rd = request.getRequestDispatcher("");
 		boolean bookingOpen = true;
 		//Book Rooms
 		if(action.equals("checkout")){
@@ -71,7 +72,6 @@ public class CheckoutServlet extends HttpServlet {
 				ps.setInt(1,u.getId());
 				ResultSet rs = ps.executeQuery();
 				if(!rs.next()){
-					System.out.println("No Bookings for selected user");
 				} else {
 					rs.beforeFirst();
 					while(rs.next()){
@@ -93,31 +93,25 @@ public class CheckoutServlet extends HttpServlet {
 					int totalBookingCount = 0;
 					int totalRooms = 0;
 					//count user bookings for this roomtype
-					ps = conn.prepareStatement("SELECT numRooms from bookingorders where roomType = ? AND uid = ? AND ((checkin <= ? AND checkout >= ?) OR (checkin <= ? AND checkout >= ?)) and location = ?;");
+					ps = conn.prepareStatement("SELECT numRooms from bookingorders where roomType = ? AND uid = ? AND ((start <= ? AND end >= ?)) and location = ?;");
 					ps.setString(1, b.getRoomType());
 					ps.setInt(2, u.getId());
 					ps.setDate(3, new java.sql.Date(b.getCheckout().getTime()));
-					ps.setDate(4, new java.sql.Date(b.getCheckout().getTime()));
-					ps.setDate(5, new java.sql.Date(b.getCheckin().getTime()));
-					ps.setDate(6, new java.sql.Date(b.getCheckin().getTime()));
-					ps.setString(7, b.getLocation());
+					ps.setDate(4, new java.sql.Date(b.getCheckin().getTime()));
+					ps.setString(5, b.getLocation());
 					rs = ps.executeQuery();					
 					if(rs.next()){
 						userBookingCount = rs.getInt("numRooms");
-						System.out.println("userbookingcount" + userBookingCount);
 					}
 					//count all bookings for this roomtype
-					ps = conn.prepareStatement("SELECT COUNT(*) as numRooms from bookings where roomType = ? AND ((checkin <= ? AND checkout >= ?) OR (checkin <= ? AND checkout >= ?)) and location = ?;");
+					ps = conn.prepareStatement("SELECT COUNT(*) as numRooms from bookings where roomType = ? AND ((start <= ? AND end >= ?)) and location = ?;");
 					ps.setString(1, b.getRoomType());
 					ps.setDate(2, new java.sql.Date(b.getCheckout().getTime()));
-					ps.setDate(3, new java.sql.Date(b.getCheckout().getTime()));
-					ps.setDate(4, new java.sql.Date(b.getCheckin().getTime()));
-					ps.setDate(5, new java.sql.Date(b.getCheckin().getTime()));
-					ps.setString(6, b.getLocation());
+					ps.setDate(3, new java.sql.Date(b.getCheckin().getTime()));
+					ps.setString(4, b.getLocation());
 					rs = ps.executeQuery();
 					if(rs.next()){
 						totalBookingCount = rs.getInt("numRooms");
-						System.out.println("totalBookingCount" + totalBookingCount);
 					}
 					//count number of rooms
 					
@@ -128,19 +122,16 @@ public class CheckoutServlet extends HttpServlet {
 					
 					if(rs.next()){
 						totalRooms = rs.getInt("numRooms");
-						System.out.println("numRoomst" + totalRooms);
 					}
 					//if there aren't enough rooms notify and send back
 					if(userBookingCount+totalBookingCount > totalRooms){
 						bookingOpen = false;
-						System.out.println("not enough rooms");
 						break;
 					}
 				}
 				
 				if(!bookingOpen){
-					System.out.println("Redirecting");
-					RequestDispatcher rd = request.getRequestDispatcher("CartServlet?action=viewCart");
+					rd = request.getRequestDispatcher("CartServlet?action=viewCart");
 					String bookingError = "One or more of the selected rooms are currently unavailable, please try again at a later time or cancel current booking";
 					request.setAttribute("bookingError",bookingError );
 					rd.forward(request, response);
@@ -149,7 +140,7 @@ public class CheckoutServlet extends HttpServlet {
 				//Move from bookingorder to booking if all fulfilled
 				if(bookingOpen){					
 					request.setAttribute("user", u);
-					RequestDispatcher rd = request.getRequestDispatcher("/checkout.jsp");
+					rd = request.getRequestDispatcher("/checkout.jsp");
 					rd.forward(request, response);
 					return;
 				}
@@ -190,8 +181,11 @@ public class CheckoutServlet extends HttpServlet {
 				ps.executeUpdate();
 				DatabaseTool.endConnection(conn);
 				MailService mailer = new MailService();
-				System.out.println("Preparing to send");
 				mailer.sendMail(u.getEmail(),"Your Hotel Booking has been confirmed","<p>Your booking has been made, to check your booking follow the link below with the provided pin.</p>\n"+"<p>http://localhost:8080/Assign2/ManageBooking?bookingRef="+URL+"</p>\n"+"PIN: "+pin);
+				request.setAttribute("bookingConfirmed", true);
+				rd = request.getRequestDispatcher("/default.jsp");
+				rd.forward(request,response);
+				return;
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
