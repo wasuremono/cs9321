@@ -6,7 +6,7 @@
 <style type="text/css">
 </style>
   <meta charset="utf-8">
-  <title>jQuery UI Datepicker - Default functionality</title>
+  <title>Hotel Booking System</title>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -18,6 +18,12 @@
   </script>
 </head>
 <body>
+<center>
+<div class = "controls">
+<h2>&lt;hotel name&gt; Booking System</h2>
+<h4><a href="login.jsp">Login</a>&nbsp;&nbsp;<a href="signup.jsp">Sign up</a></h4>
+</div>
+<p>
 <div class = "citySelect">
 	<form action="CartServlet" method = "get">
 		City 
@@ -31,7 +37,8 @@
 			</select>
 	
 </div>
-<div class="roomParameter" style="float:left;">
+<p>
+<div class="roomParameter">
 
 		Checkin Date <input name="checkin" type="text" class="datepicker" required>
 
@@ -47,6 +54,7 @@ Maximum Price($ Per Room)
 	<input type="number" name="budget" min="1">
 	<Input Type = "submit" Value = "Search!">
 </form>
-</div>		
+</div>
+</center>	
 </body>
 </html>
