@@ -50,44 +50,59 @@
 	PreparedStatement psselS = conn.prepareStatement("SELECT * FROM rooms WHERE location = 'Sydney' AND roomType = 'Single'");
 	ResultSet rsS = psselS.executeQuery();
 %>
-	<tr>
-		<td>PICTURE</td>
+<!-- ALL <tr> goes here -->
+	<% while (rsA.next()) { %>
+	<td>PICTURE</td>
 		<td><%=rsA.getString("roomType") %></td>
 		<td><%=rsA.getString("location") %></td>
 		<td><%=rsA.getInt("price") %></td>
-	</tr>
 	<tr>
-		<td>PICTURE</td>
+	<% } %>
+	
+	<% while (rsB.next()) { %>
+	<td>PICTURE</td>
 		<td><%=rsB.getString("roomType") %></td>
 		<td><%=rsB.getString("location") %></td>
 		<td><%=rsB.getInt("price") %></td>
 	</tr>
+	<% } %>
+
+	<% while (rsH.next()) { %>
 	<tr>
 		<td>PICTURE</td>
 		<td><%=rsH.getString("roomType") %></td>
 		<td><%=rsH.getString("location") %></td>
 		<td><%=rsH.getInt("price") %></td>
 	</tr>
+	<% } %>
+
+	<% while (rsM.next()) { %>
 	<tr>
 		<td>PICTURE</td>
 		<td><%=rsM.getString("roomType") %></td>
 		<td><%=rsM.getString("location") %></td>
 		<td><%=rsM.getInt("price") %></td>
 	</tr>
+	<% } %>
+
+	<% while (rsP.next()) { %>
 	<tr>
 		<td>PICTURE</td>
 		<td><%=rsP.getString("roomType") %></td>
 		<td><%=rsP.getString("location") %></td>
 		<td><%=rsP.getInt("price") %></td>
 	</tr>
+	<% } %>
+	
+	<% while (rsS.next()) { %>
 	<tr>
 		<td>PICTURE</td>
 		<td><%=rsS.getString("roomType") %></td>
 		<td><%=rsS.getString("location") %></td>
 		<td><%=rsS.getInt("price") %></td>
 	</tr>
-
-
+	<% } %>
+	
 </table>
 </div>
 
