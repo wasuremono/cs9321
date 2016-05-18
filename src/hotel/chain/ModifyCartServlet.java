@@ -47,7 +47,7 @@ public class ModifyCartServlet extends HttpServlet {
 		UserBean u = (UserBean)request.getSession().getAttribute("userBean");
 		String checkinStr = request.getParameter("checkin");	
 		String checkoutStr = request.getParameter("checkout");
-		int roomid = request.getParameter("roomid");
+		int roomid = Integer.parseInt(request.getParameter("roomid"));
 		String roomType = request.getParameter("roomType");
 		String location = request.getParameter("location");
 		String numRooms = request.getParameter("numRooms");

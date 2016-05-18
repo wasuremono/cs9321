@@ -37,17 +37,17 @@
 	</tr>
 <% 
 	Connection conn = DatabaseTool.getConnection();
-	PreparedStatement psselA = conn.prepareStatement("SELECT * FROM rooms WHERE location = Adelaide AND roomType = Single");
+	PreparedStatement psselA = conn.prepareStatement("SELECT * FROM rooms WHERE location = 'Adelaide' AND roomType = 'Single'");
 	ResultSet rsA = psselA.executeQuery();
-	PreparedStatement psselB = conn.prepareStatement("SELECT * FROM rooms WHERE location = Brisbane AND roomType = Single");
+	PreparedStatement psselB = conn.prepareStatement("SELECT * FROM rooms WHERE location = 'Brisbane' AND roomType = 'Single'");
 	ResultSet rsB = psselB.executeQuery();
-	PreparedStatement psselH = conn.prepareStatement("SELECT * FROM rooms WHERE location = Hobart AND roomType = Single");
+	PreparedStatement psselH = conn.prepareStatement("SELECT * FROM rooms WHERE location = 'Hobart' AND roomType = 'Single'");
 	ResultSet rsH = psselH.executeQuery();
-	PreparedStatement psselM = conn.prepareStatement("SELECT * FROM rooms WHERE location = Melbourne AND roomType = Single");
+	PreparedStatement psselM = conn.prepareStatement("SELECT * FROM rooms WHERE location = 'Melbourne' AND roomType = 'Single'");
 	ResultSet rsM = psselM.executeQuery();
-	PreparedStatement psselP = conn.prepareStatement("SELECT * FROM rooms WHERE location = Perth AND roomType = Single");
+	PreparedStatement psselP = conn.prepareStatement("SELECT * FROM rooms WHERE location = 'Perth' AND roomType = 'Single'");
 	ResultSet rsP = psselP.executeQuery();
-	PreparedStatement psselS = conn.prepareStatement("SELECT * FROM rooms WHERE location = Sydney AND roomType = Single");
+	PreparedStatement psselS = conn.prepareStatement("SELECT * FROM rooms WHERE location = 'Sydney' AND roomType = 'Single'");
 	ResultSet rsS = psselS.executeQuery();
 %>
 	<tr>

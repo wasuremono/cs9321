@@ -47,7 +47,7 @@ public class CartServlet extends HttpServlet {
 		
 		String checkinString = request.getParameter("checkin");	
 		String checkoutString = request.getParameter("checkout");
-		int roomid = request.getParameter("roomid");
+		int roomid = Integer.parseInt( request.getParameter("roomid") );
 		String location = request.getParameter("location");
 		String roomType = request.getParameter("roomType");
 		String numRooms = request.getParameter("numRooms");
