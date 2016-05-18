@@ -13,12 +13,13 @@
 <title>Checkout</title>
 </head>
 <body>
-<form action="CheckoutServlet" method = "get">
-<p><input type="text" size ="10" name="firstName" value=${user.firstName}>
-<p><input type="text" size ="10" name="lastName" value=${user.lastName}>
-<p><input type="text" size ="30" name="address" value=${user.address}>
-<P><input type="text" size ="30" name="email" value=${user.email}>
-<input type="hidden" name="action" value="confirm">
-<Input Type = "submit" Value = "Confirm">
+	<form action="CheckoutServlet" method ="post">
+		<p><input type="text" size ="10" name="firstName" value=${user.firstName}>
+		<p><input type="text" size ="10" name="lastName" value=${user.lastName}>
+		<p><input type="text" size ="30" name="address" value=${user.address}>
+		<P><input type="text" size ="30" name="email" value=${user.email}>
+		<input type="hidden" name="action" value="confirm">
+		<Input Type = "submit" Value = "Confirm">
+	</form>
 </body>
 </html>
